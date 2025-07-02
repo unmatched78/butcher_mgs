@@ -139,3 +139,6 @@ butcher_mgmt/
 ├─ templates/           # project-level templates
 ├─ manage.py
 └─ requirements.txt
+
+## LICENSE 
+<a href="LICENSE">see here</a>
