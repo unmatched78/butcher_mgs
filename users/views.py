@@ -26,6 +26,7 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
             'id':       self.user.id,
             'username': self.user.username,
             'email':    self.user.email,
+            'role':     self.user.role, 
             # add more fields as needed
         }
         return data
