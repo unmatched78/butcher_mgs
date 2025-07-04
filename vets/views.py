@@ -1,7 +1,7 @@
 from rest_framework import viewsets, permissions, mixins
 from .models import CowInspection, SlaughterApproval
 from .serializers import CowInspectionSerializer, SlaughterApprovalSerializer
-from .permissions import IsVet
+from config.permissions import *
 
 # vets/views.py
 class CowInspectionViewSet(viewsets.ModelViewSet):
