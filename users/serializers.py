@@ -48,10 +48,6 @@ class RegistrationSerializer(serializers.ModelSerializer):
             ShopProfile.objects.create(user=user, **shop_data)
         elif role == "vet":
             VetProfile.objects.create(user=user, **vet_data)
-        elif role == "client":
-            Customer.objects.create(user=user)
-        elif role == "supplier":
-            SupplierProfile.objects.create(user=user)
         return user
 
 
