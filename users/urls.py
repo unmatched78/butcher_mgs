@@ -5,7 +5,7 @@ from .views import *
 
 
 router = DefaultRouter()
-router.register(r"users", users.api.UserViewSet, basename="users")
+
 urlpatterns = [
     path('api/', include(router.urls)),
     path("auth/register/", RegisterView.as_view(), name="user-register"),

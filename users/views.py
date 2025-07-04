@@ -13,6 +13,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from decimal import Decimal
 from django.db import transaction 
+from config.permissions import *
 User = get_user_model()
 # Module‐level logger
 logger = logging.getLogger(__name__)  # best practice for namespaced logging
