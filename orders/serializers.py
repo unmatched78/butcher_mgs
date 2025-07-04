@@ -1,12 +1,16 @@
 from rest_framework import serializers
 from .models import Order, OrderLine
+from inventory.models import Item
+from users.models import Customer  # Ensure Customer is imported
+from shops.models import ShopProfile  # Ensure ShopProfile is imported
 
 class OrderLineSerializer(serializers.ModelSerializer):
     item_id = serializers.PrimaryKeyRelatedField(
-        queryset=None,  # set in __init__
+        queryset=Item.objects.none(),
         source="item",
         write_only=True
     )
+
     class Meta:
         model = OrderLine
         fields = ["id", "item_id", "quantity", "unit_price", "line_total"]
@@ -14,18 +18,17 @@ class OrderLineSerializer(serializers.ModelSerializer):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # bind item queryset to the shop's items
         shop = self.context.get("shop")
         if shop:
             self.fields["item_id"].queryset = shop.items.all()
-        else:
-            from inventory.models import Item
-            self.fields["item_id"].queryset = Item.objects.none()
 
-# orders/serializers.py
 class OrderSerializer(serializers.ModelSerializer):
     lines = OrderLineSerializer(many=True)
-    customer_id = serializers.PrimaryKeyRelatedField(source="customer", write_only=True, queryset=Customer.objects.all())
+    customer_id = serializers.PrimaryKeyRelatedField(
+        source="customer",
+        write_only=True,
+        queryset=Customer.objects.all()
+    )
     shop = serializers.PrimaryKeyRelatedField(queryset=ShopProfile.objects.all())
 
     class Meta:
@@ -47,7 +50,6 @@ class OrderSerializer(serializers.ModelSerializer):
         for line in lines_data:
             item = line["item"]
             quantity = line["quantity"]
-            # Check stock
             entries = StockEntry.objects.filter(item=item).aggregate(total=models.Sum("quantity"))["total"] or 0
             exits = StockExit.objects.filter(item=item).aggregate(total=models.Sum("quantity"))["total"] or 0
             available = entries - exits
