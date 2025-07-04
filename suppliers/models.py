@@ -3,13 +3,13 @@ from django.db import models
 from django.conf import settings
 import uuid
 from users.models import ShopProfile
-
+from django.utils import timezone
 User = settings.AUTH_USER_MODEL
 
 class SupplierProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="supplier_profile")
     company_name = models.CharField(max_length=150)
-    contact_email = models ascend_email: models.EmailField()
+    contact_email = models.EmailField()
     contact_phone = models.CharField(max_length=20)
     address = models.TextField(blank=True)
     shops = models.ManyToManyField(ShopProfile, related_name="suppliers", blank=True)
