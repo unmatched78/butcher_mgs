@@ -6,7 +6,7 @@ from .serializers import (
     StockEntrySerializer,
     StockExitSerializer,
 )
-from .permissions import IsShopStaff
+from config.permissions import *
 
 class CategoryViewSet(viewsets.ModelViewSet):
     serializer_class    = CategorySerializer

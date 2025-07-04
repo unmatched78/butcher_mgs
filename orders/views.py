@@ -2,7 +2,7 @@ from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from .models import Order
 from .serializers import OrderSerializer
-from .permissions import IsClient, IsShopStaff
+from config.permissions import *
 
 # orders/views.py
 class OrderViewSet(viewsets.ModelViewSet):

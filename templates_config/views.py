@@ -1,7 +1,7 @@
 from rest_framework import viewsets, permissions
 from .models import EmailTemplate
 from .serializers import EmailTemplateSerializer
-from .permissions import IsShopStaff
+from config.permissions import *
 
 class EmailTemplateViewSet(viewsets.ModelViewSet):
     """

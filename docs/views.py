@@ -1,7 +1,7 @@
 from rest_framework import viewsets, permissions
 from .models import DocumentTemplate, DocumentInstance
 from .serializers import DocumentTemplateSerializer, DocumentInstanceSerializer
-from .permissions import IsShopStaff, IsShopOrVet
+from config.permissions import *
 
 class DocumentTemplateViewSet(viewsets.ModelViewSet):
     """

@@ -3,7 +3,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from .models import Shop, CustomerProfile
 from .serializers import ShopSerializer, CustomerProfileSerializer
-from .permissions import IsClient
+from config.permissions import *
 from inventory.models import Item
 from inventory.serializers import ItemSerializer
 

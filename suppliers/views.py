@@ -13,7 +13,7 @@ from .serializers import (
     QuotationSerializer,
     SupplyEntrySerializer,
 )
-from .permissions import IsShopStaff, IsSupplier
+from config.permissions import *
 
 class SupplierProfileViewSet(viewsets.GenericViewSet,
                              viewsets.mixins.RetrieveModelMixin,
