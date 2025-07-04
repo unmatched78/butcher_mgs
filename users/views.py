@@ -14,6 +14,9 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from decimal import Decimal
 from django.db import transaction 
 from config.permissions import *
+from suppliers.models import SupplierProfile
+from suppliers.serializers import SupplierProfileSerializer
+from users.serializers import SupplierRegistrationSerializer
 User = get_user_model()
 # Module‐level logger
 logger = logging.getLogger(__name__)  # best practice for namespaced logging

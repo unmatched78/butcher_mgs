@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from .models import ShopProfile, VetProfile
-
+from suppliers.models import SupplierProfile
 User = get_user_model()
 # users/serializers.py
 class RegistrationSerializer(serializers.ModelSerializer):

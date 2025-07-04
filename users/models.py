@@ -51,15 +51,11 @@ class Customer(models.Model):
     def __str__(self):
         return self.user.get_full_name() or self.user.username
 
-class SupplierProfile(models.Model):
-    user               = models.OneToOneField(User, on_delete=models.CASCADE, related_name="supplier_profile")
-    supplies_to_shops  = models.ManyToManyField(
-        ShopProfile,
-        related_name="suppliers",
-        blank=True
-    )
-    created            = models.DateTimeField(default=timezone.now)
-    updated            = models.DateTimeField(auto_now=True)
 
-    def __str__(self):
-        return self.user.get_full_name() or self.user.username
+# class SupplierProfile(models.Model):
+#     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="supplier_profile")
+#     supplies_to_shops = models.ManyToManyField(ShopProfile, related_name="suppliers", blank=True)
+#     created = models.DateTimeField(default=timezone.now)
+#     updated = models.DateTimeField(auto_now=True)
+#     def __str__(self):
+#         return self.user.get_full_name() or self.user.username
