@@ -156,7 +156,7 @@ from datetime import timedelta
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
-    # you can add algorithm, signing key overrides, etc.
+    # add algorithm, signing key overrides, etc.
 }
 
 #corsheader config
