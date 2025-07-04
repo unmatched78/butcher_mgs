@@ -2,7 +2,7 @@ from rest_framework import serializers
 from .models import Order, OrderLine
 from inventory.models import Item
 from users.models import Customer  # Ensure Customer is imported
-from shops.models import ShopProfile  # Ensure ShopProfile is imported
+from users.models import ShopProfile  # Ensure ShopProfile is imported
 
 class OrderLineSerializer(serializers.ModelSerializer):
     item_id = serializers.PrimaryKeyRelatedField(
