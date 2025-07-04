@@ -33,3 +33,11 @@ class IsVet(BasePermission):
             request.user.is_authenticated and
             getattr(request.user, "role", None) == "vet"
         )
+
+class IsShopOrVet(BasePermission):
+    """Allows access to shop‑staff or vets."""
+    def has_permission(self, request, view):
+        return bool(
+            request.user.is_authenticated
+            and getattr(request.user, "role", None) in ("shop", "vet")
+        )
