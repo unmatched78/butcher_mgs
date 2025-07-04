@@ -160,3 +160,18 @@ SIMPLE_JWT = {
 }
 
 #corsheader config
+#allow all origins for development
+CORS_ALLOW_ALL_ORIGINS = True
+# Uncomment and configure for production
+# CORS_ALLOWED_ORIGINS = [
+#     "https://yourdomain.com",
+#     "https://www.yourdomain.com",
+# ]
+# CORS_ALLOW_CREDENTIALS = True  # If you need to allow cookies or HTTP auth
+# CORS_ALLOW_HEADERS = list(default_headers) + [
+#     'content-disposition',
+#     'x-csrftoken',
+#     'x-requested-with',
+#     'x-xsrf-token',
+#     'x-custom-header',
+
