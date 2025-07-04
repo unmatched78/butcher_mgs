@@ -3,7 +3,7 @@ from django.conf import settings
 from django.utils import timezone
 import uuid
 from users.models import ShopProfile
-from inventory.models import Item
+from inventory.models import *
 
 User = settings.AUTH_USER_MODEL
 
