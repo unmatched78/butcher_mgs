@@ -43,12 +43,21 @@ class StockEntryViewSet(viewsets.ModelViewSet):
         serializer.save()
 
 
+# inventory/views.py
 class StockExitViewSet(viewsets.ModelViewSet):
-    serializer_class    = StockExitSerializer
-    permission_classes  = [permissions.IsAuthenticated, IsShopStaff]
+    serializer_class = StockExitSerializer
+    permission_classes = [permissions.IsAuthenticated, IsShopStaff]
 
     def get_queryset(self):
         return StockExit.objects.filter(item__shop=self.request.user.shop_profile)
 
     def perform_create(self, serializer):
+        item = serializer.validated_data["item"]
+        quantity = serializer.validated_data["quantity"]
+        # Calculate current stock
+        entries = StockEntry.objects.filter(item=item).aggregate(total=models.Sum("quantity"))["total"] or 0
+        exits = StockExit.objects.filter(item=item).aggregate(total=models.Sum("quantity"))["total"] or 0
+        available = entries - exits
+        if quantity > available:
+            raise serializers.ValidationError({"quantity": "Insufficient stock available."})
         serializer.save()

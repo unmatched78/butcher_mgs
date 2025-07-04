@@ -51,3 +51,11 @@ class StockExit(models.Model):
 
     def __str__(self):
         return f"Exit: {self.item.name} ×{self.quantity} at {self.sold_price}"
+# inventory/models.py
+class Cow(models.Model):
+    shop = models.ForeignKey(ShopProfile, on_delete=models.CASCADE, related_name="cows")
+    tag_number = models.CharField(max_length=50, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Cow #{self.tag_number} ({self.shop.shop_name})"
