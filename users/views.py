@@ -49,3 +49,32 @@ class MyTokenObtainPairView(TokenObtainPairView):
 class RegisterView(generics.CreateAPIView):
     serializer_class = RegistrationSerializer
     permission_classes = [permissions.AllowAny]
+    
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated, IsShopStaff])
+def register_supplier(request):
+    serializer = SupplierRegistrationSerializer(data=request.data, context={'request': request})
+    if serializer.is_valid():
+        user = serializer.save()
+        supplier_profile = user.supplier_profile
+        # Return the supplier profile data
+        return Response(
+            SupplierProfileSerializer(supplier_profile).data,
+            status=status.HTTP_201_CREATED
+        )
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated, IsShopStaff])
+def register_customer(request):
+    serializer = CustomerRegistrationSerializer(data=request.data, context={'request': request})
+    if serializer.is_valid():
+        user = serializer.save()
+        customer_profile = user.client_profile
+        # Return the customer profile data
+        return Response(
+            CustomerProfileSerializer(customer_profile).data,
+            status=status.HTTP_201_CREATED
+        )
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

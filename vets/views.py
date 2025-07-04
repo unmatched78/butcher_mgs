@@ -3,11 +3,8 @@ from .models import CowInspection, SlaughterApproval
 from .serializers import CowInspectionSerializer, SlaughterApprovalSerializer
 from .permissions import IsVet
 
+# vets/views.py
 class CowInspectionViewSet(viewsets.ModelViewSet):
-    """
-    - Vets (role='vet') can create/update/delete their inspections.
-    - Shop staff can list & retrieve inspections for their own cows.
-    """
     serializer_class = CowInspectionSerializer
     queryset = CowInspection.objects.select_related("cow", "vet")
 
@@ -21,19 +18,9 @@ class CowInspectionViewSet(viewsets.ModelViewSet):
         qs = super().get_queryset()
         if user.role == "vet":
             return qs.filter(vet=user)
-        # adjust this filter to match how you link cows to shops:
-        return qs.filter(cow__client=user.shop_profile)
+        return qs.filter(cow__shop=user.shop_profile)
 
-
-class SlaughterApprovalViewSet(viewsets.GenericViewSet,
-                               mixins.CreateModelMixin,
-                               mixins.RetrieveModelMixin,
-                               mixins.ListModelMixin,
-                               mixins.UpdateModelMixin):
-    """
-    - Vets can create or update the sole approval per cow.
-    - Shop staff can list & retrieve approvals for their cows.
-    """
+class SlaughterApprovalViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin, mixins.RetrieveModelMixin, mixins.ListModelMixin, mixins.UpdateModelMixin):
     serializer_class = SlaughterApprovalSerializer
     queryset = SlaughterApproval.objects.select_related("cow", "vet")
 
@@ -47,4 +34,4 @@ class SlaughterApprovalViewSet(viewsets.GenericViewSet,
         qs = super().get_queryset()
         if user.role == "vet":
             return qs.filter(vet=user)
-        return qs.filter(cow__client=user.shop_profile)
+        return qs.filter(cow__shop=user.shop_profile)
