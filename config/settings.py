@@ -158,3 +158,5 @@ SIMPLE_JWT = {
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
     # you can add algorithm, signing key overrides, etc.
 }
+
+#corsheader config
