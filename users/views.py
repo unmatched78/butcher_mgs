@@ -11,6 +11,8 @@ from rest_framework import filters
 from .serializers import *
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.views import TokenRefreshView
+from .serializers import MyTokenRefreshSerializer
 from decimal import Decimal
 from django.db import transaction 
 from config.permissions import *
@@ -49,6 +51,9 @@ class MyTokenObtainPairView(TokenObtainPairView):
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user)
 
+
+class MyTokenRefreshView(TokenRefreshView):
+    serializer_class = MyTokenRefreshSerializer
 
 class RegisterView(generics.CreateAPIView):
     serializer_class = RegistrationSerializer

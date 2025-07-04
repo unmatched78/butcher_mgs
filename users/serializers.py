@@ -2,8 +2,40 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from .models import ShopProfile, VetProfile
 from suppliers.models import SupplierProfile
+from rest_framework_simplejwt.serializers import TokenRefreshSerializer
+from rest_framework_simplejwt.tokens import RefreshToken
+from django.contrib.auth import get_user_model
 User = get_user_model()
 # users/serializers.py
+
+
+class MyTokenRefreshSerializer(TokenRefreshSerializer):
+    def validate(self, attrs):
+        # this gives you the {"access": "..."} dict
+        data = super().validate(attrs)
+
+        # decode the incoming refresh token to get your custom claim:
+        refresh = RefreshToken(attrs['refresh'])
+        user_id = refresh.get('user_id')
+
+        # lookup the user
+        try:
+            user = User.objects.get(id=user_id)
+        except User.DoesNotExist:
+            # fall back if something is wrong
+            return data
+
+        # attach whatever user fields you want:
+        data['user'] = {
+            'id':       user.id,
+            'username': user.username,
+            'email':    user.email,
+            'role':     getattr(user, 'role', None),
+            # …any other fields/seria lizer if you prefer…
+        }
+
+        return data
+
 class RegistrationSerializer(serializers.ModelSerializer):
     shop_name = serializers.CharField(write_only=True, required=False)
     shop_email = serializers.EmailField(write_only=True, required=False)
