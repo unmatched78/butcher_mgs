@@ -15,8 +15,10 @@ class EmailTemplateViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return EmailTemplate.objects.filter(shop=self.request.user.shop_profile)
 
+    def perform_create(self, serializer):
+        serializer.save(last_used=timezone.now(), shop=self.request.user.shop_profile)
     def perform_update(self, serializer):
-        serializer.save(last_used=timezone.now())
+        serializer.save(last_used=timezone.now(), shop=self.request.user.shop_profile)
 
 class CommunicationHistoryViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = CommunicationHistorySerializer
