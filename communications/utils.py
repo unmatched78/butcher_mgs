@@ -13,6 +13,7 @@ def send_email(to, subject, content):
     try:
         r = resend.Emails.send({
             "from": "your-verified-email@example.com",  # Replace with your verified sender email
+            "cc": ['cc_example@email.com'], # Add CC recipients here
             "to": to,
             "subject": subject,
             "html": content,

@@ -30,6 +30,9 @@ class SendCommunicationView(APIView):
 
     def post(self, request):
         shop = request.user.shop_profile
+        if not shop:
+            return Response({"detail": "Shop profile not found"}, status=status.HTTP_404_NOT_FOUND)
+        shop_email= shop.email or  ""
         data = request.data
         subject = data.get("subject")
         content = data.get("content")
@@ -41,7 +44,7 @@ class SendCommunicationView(APIView):
             return Response({"detail": "Missing required fields"}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            send_email(recipient_email, subject, content)
+            send_email(recipient_email,shop_email, subject, content)
             CommunicationHistory.objects.create(
                 shop=shop,
                 template_id=template_id,
