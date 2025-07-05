@@ -1,6 +1,6 @@
 # Butcher Shop Management System/ ERP 
 
-A modular, Django‑ and DRF‑based platform for managing multi‑tenant butcher shops in Rwanda. Provides core functionality for shop owners, suppliers, veterinarians, and end‑customers—including inventory, orders, dynamic JSON‑driven documents, email templates, and more—all secured with JWT authentication.
+A modular, Django‑ and DRF‑based platform for managing multi‑tenant butcher shops in Rwanda. Provides core functionality for shop owners, suppliers, veterinarians, and end‑customers—including inventory, orders, dynamic JSON‑driven documents, email templates, and more—all secured with JWT authentication.see frontend <a href="https://github.com/unmatched78/mgs-front:>here</a>
 
 ---
 
