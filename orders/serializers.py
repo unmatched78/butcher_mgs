@@ -11,11 +11,12 @@ class OrderLineSerializer(serializers.ModelSerializer):
         source="item",
         write_only=True
     )
+    name = serializers.CharField(source="item.name", read_only=True)
 
     class Meta:
         model = OrderLine
-        fields = ["id", "item_id", "quantity", "unit_price", "line_total"]
-        read_only_fields = ["id", "unit_price", "line_total"]
+        fields = ["id", "item_id", "name", "quantity", "unit_price", "line_total"]
+        read_only_fields = ["id", "unit_price", "line_total", "name"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -31,12 +32,20 @@ class OrderSerializer(serializers.ModelSerializer):
         queryset=Customer.objects.all()
     )
     shop = serializers.PrimaryKeyRelatedField(queryset=ShopProfile.objects.all())
-    customer_name = serializers.CharField(source="customer.user.get_full_name", read_only=True)
+    customer = serializers.SerializerMethodField(read_only=True)
+    date = serializers.DateTimeField(source="created_at", read_only=True)
 
     class Meta:
         model = Order
-        fields = ["id", "shop", "customer_id", "customer_name", "status", "total", "created_at", "updated_at", "lines"]
-        read_only_fields = ["id", "status", "total", "created_at", "updated_at", "customer_name"]
+        fields = ["id", "shop", "customer_id", "customer", "status", "total", "date", "lines"]
+        read_only_fields = ["id", "status", "total", "date", "customer"]
+
+    def get_customer(self, obj):
+        return {
+            "name": obj.customer.user.get_full_name() or obj.customer.user.username,
+            "email": obj.customer.user.email,
+            "phone": obj.customer.client_for_shops.first().shop_phone  # Assuming phone from shop
+        }
 
     def validate(self, attrs):
         shop = attrs["shop"]
@@ -60,19 +69,11 @@ class OrderSerializer(serializers.ModelSerializer):
             line["order"] = order
             ol = OrderLine.objects.create(**line)
             total += ol.line_total
-            # Create StockExit for the order
-            StockExit.objects.create(
-                item=item,
-                quantity=quantity,
-                sold_price=ol.unit_price,
-                sold_to=customer.user.get_full_name() or customer.user.username
-            )
         order.total = total
         order.save()
         return order
 
     def update(self, instance, validated_data):
-        # Allow shop staff to update status only
         instance.status = validated_data.get("status", instance.status)
         instance.save()
         return instance

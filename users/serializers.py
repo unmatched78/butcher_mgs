@@ -1,10 +1,11 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from .models import ShopProfile, VetProfile
+from .models import ShopProfile, VetProfile, Customer
 from suppliers.models import SupplierProfile
 from rest_framework_simplejwt.serializers import TokenRefreshSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model
+
 User = get_user_model()
 # users/serializers.py
 
@@ -146,3 +147,14 @@ class CustomerRegistrationSerializer(serializers.ModelSerializer):
         shop = self.context['request'].user.shop_profile
         customer_profile.client_for_shops.add(shop)
         return user
+    
+
+# users/serializers.py
+class CustomerProfileSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(source="id")
+    name = serializers.CharField(source="user.get_full_name", read_only=True)
+    email = serializers.EmailField(source="user.email", read_only=True)
+
+    class Meta:
+        model = Customer
+        fields = ["id", "name", "email"]

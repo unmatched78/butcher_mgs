@@ -128,3 +128,10 @@ def register_customer(request):
             status=status.HTTP_201_CREATED
         )
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated, IsShopStaff])
+def customer_list(request):
+    customers = Customer.objects.filter(client_for_shops=request.user.shop_profile)
+    serializer = CustomerProfileSerializer(customers, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)

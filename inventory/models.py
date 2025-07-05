@@ -3,6 +3,7 @@ from django.db import models
 from django.conf import settings
 from users.models import ShopProfile
 
+
 class Category(models.Model):
     shop = models.ForeignKey(ShopProfile, on_delete=models.CASCADE, related_name="categories")
     name = models.CharField(max_length=100)
@@ -48,15 +49,16 @@ class StockEntry(models.Model):
 
 
 class StockExit(models.Model):
+    from orders.models import Order  # Import Order model to avoid circular import issues
     item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name="exits")
     quantity = models.PositiveIntegerField()
     sold_price = models.DecimalField(max_digits=10, decimal_places=2)
     sold_to = models.CharField(max_length=150, blank=True)
+    order = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True, blank=True, related_name="stock_exits")# Update inventory.models.StockExit to add optional Order reference
     issued_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"Exit: {self.item.name} ×{self.quantity} at {self.sold_price}"
-
 
 class Cow(models.Model):
     shop = models.ForeignKey(ShopProfile, on_delete=models.CASCADE, related_name="cows")
