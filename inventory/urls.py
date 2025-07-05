@@ -21,7 +21,7 @@ router.register(r"exits", StockExitViewSet, basename="exits")
 urlpatterns = [
     path("", include(router.urls)),
     path("inventory/", InventoryListView.as_view(), name="inventory-list"),
-    path("inventory/reorder/", InventoryReorderView.as_view(), name="inventory-reorder"),
-    path("inventory/mark-used/", InventoryMarkUsedView.as_view(), name="inventory-mark-used"),
-    path("inventory/trends/", InventoryTrendsView.as_view(), name="inventory-trends"),
+    path("reorder/", InventoryReorderView.as_view(), name="inventory-reorder"),
+    path("mark-used/", InventoryMarkUsedView.as_view(), name="inventory-mark-used"),
+    path("trends/", InventoryTrendsView.as_view(), name="inventory-trends"),
 ]
