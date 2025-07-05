@@ -1,10 +1,11 @@
 # users/core/views.py
 import logging
 from rest_framework import viewsets, status, generics, permissions
+from rest_framework.views import APIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAuthenticated, BasePermission, AllowAny
 from rest_framework.response import Response
-from rest_framework.decorators import action, api_view, permission_classes, authentication_classes, api_view, permission_classes
+from rest_framework.decorators import action, api_view, permission_classes, authentication_classes
 from django.contrib.auth import get_user_model
 from .models import *
 from rest_framework import filters
@@ -15,10 +16,17 @@ from rest_framework_simplejwt.views import TokenRefreshView
 from .serializers import MyTokenRefreshSerializer
 from decimal import Decimal
 from django.db import transaction 
+from django.db.models import Sum, Count
+from django.utils import timezone
+from datetime import timedelta
+from orders.models import Order
+from inventory.models import Item as InventoryItem
+from rest_framework import generics
 from config.permissions import *
 from suppliers.models import SupplierProfile
 from suppliers.serializers import SupplierProfileSerializer
-from users.serializers import SupplierRegistrationSerializer
+from users.serializers import SupplierRegistrationSerializer, CustomerRegistrationSerializer
+from clients.serializers import CustomerProfileSerializer
 User = get_user_model()
 # Module‐level logger
 logger = logging.getLogger(__name__)  # best practice for namespaced logging
@@ -59,6 +67,39 @@ class RegisterView(generics.CreateAPIView):
     serializer_class = RegistrationSerializer
     permission_classes = [permissions.AllowAny]
     
+# users/views.py
+class ShopTasksView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        if user.role != "shop":
+            return Response({"detail": "Unauthorized"}, status=403)
+        tasks = [
+            {"id": 1, "title": "Approve delivery for Order #1234", "priority": "high"},
+            {"id": 2, "title": "Review expiring inventory items", "priority": "medium"}
+            # Add logic to fetch from models, e.g., Task.objects.filter(shop=user.shop_profile)
+        ]
+        return Response(tasks)
+
+
+class ShopMetricsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        if user.role != "shop":
+            return Response({"detail": "Unauthorized"}, status=403)
+        total_sales = Order.objects.filter(shop=user.shop_profile).aggregate(total=Sum("total"))["total"] or 0
+        pending_orders = Order.objects.filter(shop=user.shop_profile, status="pending").count()
+        low_stock_items = InventoryItem.objects.filter(shop=user.shop_profile, quantity__lte=10).count()
+        expiring_items = InventoryItem.objects.filter(shop=user.shop_profile, expiry_date__lte=timezone.now() + timedelta(days=3)).count()
+        return Response({
+            "totalSales": f"RWF {total_sales}",
+            "pendingOrders": str(pending_orders),
+            "lowStockItems": str(low_stock_items),
+            "expiringItems": str(expiring_items),
+        })
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated, IsShopStaff])

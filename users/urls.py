@@ -14,4 +14,6 @@ urlpatterns = [
     #path("auth/refresh/", TokenRefreshView.as_view(),    name="token_refresh"),
     path('register-supplier/', register_supplier, name='register-supplier'),
     path('register-customer/', register_customer, name='register-customer'),
+    path('shop/metrics/', ShopMetricsView.as_view(), name='shop-metrics'),
+    path('shop/tasks/', ShopTasksView.as_view(), name='shop-tasks'),
 ]

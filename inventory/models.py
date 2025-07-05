@@ -20,8 +20,11 @@ class Item(models.Model):
     shop = models.ForeignKey(ShopProfile, on_delete=models.CASCADE, related_name="items")
     sku = models.CharField(max_length=50)
     name = models.CharField(max_length=150)
+    quantity = models.PositiveIntegerField(default=0)
+    description = models.TextField(blank=True)
     category = models.ForeignKey(Category, on_delete=models.PROTECT, related_name="items")
     unit_price = models.DecimalField(max_digits=10, decimal_places=2)
+    expiry_date = models.DateField(null=True, blank=True)
 
     class Meta:
         unique_together = (("shop", "sku"),)
