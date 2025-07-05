@@ -24,6 +24,8 @@ class Item(models.Model):
     description = models.TextField(blank=True)
     category = models.ForeignKey(Category, on_delete=models.PROTECT, related_name="items")
     unit_price = models.DecimalField(max_digits=10, decimal_places=2)
+    unit = models.CharField(max_length=20, default="kg")  # Default unit, can be adjusted
+    last_updated = models.DateTimeField(auto_now=True)
     expiry_date = models.DateField(null=True, blank=True)
 
     class Meta:

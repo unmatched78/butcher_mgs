@@ -1,10 +1,10 @@
+# orders/views.py
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from .models import Order
 from .serializers import OrderSerializer
-from config.permissions import *
+from config.permissions import IsShopStaff, IsClient
 
-# orders/views.py
 class OrderViewSet(viewsets.ModelViewSet):
     serializer_class = OrderSerializer
     queryset = Order.objects.select_related("shop", "customer").prefetch_related("lines")
@@ -23,4 +23,7 @@ class OrderViewSet(viewsets.ModelViewSet):
         return self.queryset.filter(shop=user.shop_profile)
 
     def get_serializer_context(self):
-        return super().get_serializer_context()  # Remove shop defaulting
+        context = super().get_serializer_context()
+        if self.request.user.role == "shop":
+            context["shop"] = self.request.user.shop_profile
+        return context

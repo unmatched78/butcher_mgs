@@ -1,8 +1,9 @@
+# orders/serializers.py
 from rest_framework import serializers
 from .models import Order, OrderLine
 from inventory.models import Item
-from users.models import Customer  # Ensure Customer is imported
-from users.models import ShopProfile  # Ensure ShopProfile is imported
+from users.models import Customer, ShopProfile
+from django.db.models import Sum
 
 class OrderLineSerializer(serializers.ModelSerializer):
     item_id = serializers.PrimaryKeyRelatedField(
@@ -30,11 +31,12 @@ class OrderSerializer(serializers.ModelSerializer):
         queryset=Customer.objects.all()
     )
     shop = serializers.PrimaryKeyRelatedField(queryset=ShopProfile.objects.all())
+    customer_name = serializers.CharField(source="customer.user.get_full_name", read_only=True)
 
     class Meta:
         model = Order
-        fields = ["id", "shop", "customer_id", "status", "total", "created_at", "updated_at", "lines"]
-        read_only_fields = ["id", "status", "total", "created_at", "updated_at"]
+        fields = ["id", "shop", "customer_id", "customer_name", "status", "total", "created_at", "updated_at", "lines"]
+        read_only_fields = ["id", "status", "total", "created_at", "updated_at", "customer_name"]
 
     def validate(self, attrs):
         shop = attrs["shop"]
@@ -50,14 +52,27 @@ class OrderSerializer(serializers.ModelSerializer):
         for line in lines_data:
             item = line["item"]
             quantity = line["quantity"]
-            entries = StockEntry.objects.filter(item=item).aggregate(total=models.Sum("quantity"))["total"] or 0
-            exits = StockExit.objects.filter(item=item).aggregate(total=models.Sum("quantity"))["total"] or 0
+            entries = StockEntry.objects.filter(item=item).aggregate(total=Sum("quantity"))["total"] or 0
+            exits = StockExit.objects.filter(item=item).aggregate(total=Sum("quantity"))["total"] or 0
             available = entries - exits
             if quantity > available:
                 raise serializers.ValidationError({f"lines[{lines_data.index(line)}].quantity": "Insufficient stock."})
             line["order"] = order
             ol = OrderLine.objects.create(**line)
             total += ol.line_total
+            # Create StockExit for the order
+            StockExit.objects.create(
+                item=item,
+                quantity=quantity,
+                sold_price=ol.unit_price,
+                sold_to=customer.user.get_full_name() or customer.user.username
+            )
         order.total = total
         order.save()
         return order
+
+    def update(self, instance, validated_data):
+        # Allow shop staff to update status only
+        instance.status = validated_data.get("status", instance.status)
+        instance.save()
+        return instance
