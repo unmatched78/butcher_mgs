@@ -7,14 +7,15 @@ logger = logging.getLogger(__name__)
 
 resend.api_key = settings.RESEND_API_KEY
 
-def send_email(to, subject, content):
+def send_email(to, CC, subject, content):
     if not settings.RESEND_API_KEY:
         raise ValueError("RESEND_API_KEY is not set in settings")
     try:
         r = resend.Emails.send({
             "from": "your-verified-email@example.com",  # Replace with your verified sender email
-            "cc": ['cc_example@email.com'], # Add CC recipients here
             "to": to,
+            #remember they are many shops, so we need to use the shop's email
+            "cc": "CC",
             "subject": subject,
             "html": content,
         })
