@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",#"rest_framework_simplejwt",
     "users",
     'corsheaders',
+    'communications',  # For email and SMS notifications
     # Your apps
     "clients",
     "inventory",

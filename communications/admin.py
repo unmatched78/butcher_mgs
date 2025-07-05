@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.apps import apps
 
-app_models = apps.get_app_config('templates_config').get_models()#_your_app_should be called
+app_models = apps.get_app_config('communications').get_models()#_your_app_should be called
 for model in app_models:
     admin.site.register(model)

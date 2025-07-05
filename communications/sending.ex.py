@@ -1,5 +1,5 @@
 from django.core.mail import send_mail
-from templates_config.utils import render_email
+from communications.utils import render_email
 
 def invite_supplier(shop, supplier_email, accept_url):
     subject, body = render_email(
