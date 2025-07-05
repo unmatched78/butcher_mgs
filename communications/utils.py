@@ -1,24 +1,23 @@
-from django.template import engines, TemplateDoesNotExist
-from django.template.loader import get_template
-from .models import EmailTemplate
+# communications/utils.py
+import resend
+from django.conf import settings
+import logging
 
-def render_email(shop, code, context):
-    """
-    1. Try to load EmailTemplate for this shop+code.
-    2. If exists, render its subject & body via the Django engine.
-    3. Otherwise, load file templates/email_config/{code}.html,
-       split first line as subject, rest as body.
-    Returns (subject, body) as rendered strings.
-    """
+logger = logging.getLogger(__name__)
+
+resend.api_key = settings.RESEND_API_KEY
+
+def send_email(to, subject, content):
+    if not settings.RESEND_API_KEY:
+        raise ValueError("RESEND_API_KEY is not set in settings")
     try:
-        et = EmailTemplate.objects.get(shop=shop, code=code)
-        engine = engines["django"]
-        subj_tpl = engine.from_string(et.subject)
-        body_tpl = engine.from_string(et.body)
-        return subj_tpl.render(context), body_tpl.render(context)
-    except EmailTemplate.DoesNotExist:
-        tpl = get_template(f"email_config/{code}.html")
-        rendered = tpl.render(context)
-        # assume first line up to newline is subject:
-        subject, body = rendered.split("\n", 1)
-        return subject.strip(), body.strip()
+        r = resend.Emails.send({
+            "from": "your-verified-email@example.com",  # Replace with your verified sender email
+            "to": to,
+            "subject": subject,
+            "html": content,
+        })
+        return r
+    except Exception as e:
+        logger.error(f"Failed to send email: {e}")
+        raise

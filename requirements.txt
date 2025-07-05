@@ -7,3 +7,5 @@ python-dotenv
 django-cors-headers
 weasyprint
 reportlab
+resend
+django-extensions

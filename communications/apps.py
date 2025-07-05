@@ -1,6 +1,8 @@
+# communications/apps.py
 from django.apps import AppConfig
 
-
-class EmailConfigConfig(AppConfig):
-    default_auto_field = 'django.db.models.BigAutoField'
+class CommunicationsConfig(AppConfig):
     name = 'communications'
+
+    def ready(self):
+        import communications.signals  # Import signals

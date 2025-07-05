@@ -42,7 +42,13 @@ INSTALLED_APPS = [
     "docs",
     "vets",
 ]
+# settings.py
+import os
+from dotenv import load_dotenv
 
+load_dotenv()
+
+RESEND_API_KEY = os.getenv("RESEND_API_KEY")
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
